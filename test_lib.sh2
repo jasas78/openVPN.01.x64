@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sh ./test_lib.sh |grep ' => /' |grep -v /home/bootH/OpenVZ |awk '{print $3}'
