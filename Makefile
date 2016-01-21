@@ -36,16 +36,22 @@ x86sign:=$(shell uname -a |grep -q x86_64 && echo 1 || echo 2)
 
 all :
 	@echo ; echo ; echo
-	@echo ' b   : build '
-	@echo ' c   : clean '
-	@echo ' e   : extract '
-	@echo ' xp  : xor_patch  '
-	@echo ' ceb : clean extract xor_patch build '
+	@echo ' b    : build '
+	@echo ' c    : clean '
+	@echo ' e    : extract '
+	@echo ' xp   : xor_patch  '
+	@echo ' rlib : regen_lib'
+	@echo ' ceb  : clean extract xor_patch build regen_lib '
 	@echo 
-	@echo ' if need gen ld_libs , use : '
-	@echo '        sh ./test_lib.sh2 > 1.txt '
-	@echo '        cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ '
+#	@echo ' if need gen ld_libs , use : '
+#	@echo '        sh ./test_lib.sh2 > 1.txt '
+#	@echo '        cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ '
 	@echo ; echo ; echo
+
+rlib regen_lib:
+	sh ./test_lib.sh2 > 1.txt 
+	cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ 
+
 m:
 	vim Makefile
 
@@ -59,14 +65,21 @@ $(src_Makefile): $(srcA)
 
 e extract : $(src_Makefile)
 
-ceb : clean extract xor_patch build
+ceb : clean extract xor_patch build regen_lib 
 
 b build : force_i386 bbb2  
-bbb2 : rm_ld_libs  run_config run_make run_make_install
+bbb2 : rm_ld_libs  run_config run_make run_rm_old_install_bin run_make_install
 
 force_i386 :
 	[ "$(x86sign)" = '2' ] || ( echo ; echo ; echo "error met , no allow in a x86_64" ; echo ; echo ; exit 34 ) 
 
+cb clean_bin run_rm_old_install_bin : 
+	@echo
+	[ -f $(ver)/sbin/openvpn ] && ( \
+		chmod -R u+w $(ver)/ ; \
+		rm -fr $(ver)/ ; \
+		) || ( echo ; echo " $(ver)/sbin/openvpn don't exist " ; echo )
+	@echo
 
 #		LDFLAGS=" -Wl,-rpath=/system/ext41/lib -Wl,-rpath=/system/ext41/usr/lib -Wl,-rpath=/home/bootH/OpenVZ/i386/lib " \
 
@@ -80,6 +93,7 @@ run_make:
 	cd $(dir09)/ && make                     > ../log.$(srcN).make.txt
 run_make_install:
 	cd $(dir09)/ && make install             > ../log.$(srcN).install.txt
+	chmod -R a-w $(ver)/
 
 
 
@@ -109,8 +123,10 @@ xp xor_patch  :
 	@echo 
 #	cd $(dir09)/ && ( [ -L openvpn-2.3.6  ] || ln -s . openvpn-2.3.6  )
 #	cd $(dir09)/ && ( [ -L openvpn-2.3.6_ ] || ln -s . openvpn-2.3.6_ )
-	cd $(dir09)/ && patch -p1 < ../../openvpn_xor.patch
 #	cd $(dir09)/ && patch < ../../openvpn_xor.patch
+#	cd $(dir09)/ && patch -p1 < ../../openvpn_xor.patch
+	cd $(dir09)/ && patch -p1 < ../../xor_patch.patch02
+	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN)/ $(srcN).bak01/  &> xor_patch.now ; echo )
 	@echo 
 
 

@@ -12,7 +12,8 @@
 /lib/*.so
 /lib/*.so.?
 /lib/*.so.10
-/src/openvpn-2.?.?.tar.xz
+/src/openvpn-2.3.?.tar.xz
+/src/openvpn-2.3.1?.tar.xz
 
 /2.3.?.tar.xz
 
