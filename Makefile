@@ -27,6 +27,7 @@ srcN:=$(name)-$(ver)
 srcA:=src/$(srcN).$(ext)
 
 dir09:=$(build_dir)/$(name)-$(ver)
+dir08:=$(dir09).bak01
 
 src:=$(srcA)
 src_Makefile:=$(srcN)/Makefile
@@ -38,7 +39,8 @@ all :
 	@echo ' b   : build '
 	@echo ' c   : clean '
 	@echo ' e   : extract '
-	@echo ' ceb : clean extract build '
+	@echo ' xp  : xor_patch  '
+	@echo ' ceb : clean extract xor_patch build '
 	@echo 
 	@echo ' if need gen ld_libs , use : '
 	@echo '        sh ./test_lib.sh2 > 1.txt '
@@ -57,7 +59,7 @@ $(src_Makefile): $(srcA)
 
 e extract : $(src_Makefile)
 
-ceb : clean extract build
+ceb : clean extract xor_patch build
 
 b build : force_i386 bbb2  
 bbb2 : rm_ld_libs  run_config run_make run_make_install
@@ -79,6 +81,9 @@ run_make:
 run_make_install:
 	cd $(dir09)/ && make install             > ../log.$(srcN).install.txt
 
+
+
+
 #######     HowTo compile OpenVPN + obfuscation with xorpatch on Debian
 # apt-get install build-essential libssl-dev liblzo2-dev libpam0g-dev easy-rsa 
 # wget http://swupdate.openvpn.org/community/releases/openvpn-2.3.7.tar.xz
@@ -89,6 +94,24 @@ run_make_install:
 # ./configure
 # ./make
 # ./make install
+
+xd xor_diff  :
+	@echo 
+	diff -r $(dir09) $(dir08) 
+	@echo 
+
+xp xor_patch  :
+	@echo 
+#	cd $(dir09)/ && ( [ -L openvpn-2.3.6  ] || ln -s . openvpn-2.3.6  )
+#	cd $(dir09)/ && ( [ -L openvpn-2.3.6_ ] || ln -s . openvpn-2.3.6_ )
+	cd $(dir09)/ && patch -p1 < ../../openvpn_xor.patch
+#	cd $(dir09)/ && patch < ../../openvpn_xor.patch
+	@echo 
+
+
+
+
+
 
 gs:
 	git status
@@ -124,4 +147,5 @@ vp vim_prepare1 : vim_prepare_clean
 	@ctags -L _vim/cscope.files
 	@cscope -Rbu  -k -i_vim/cscope.files 
 	sync
+
 
