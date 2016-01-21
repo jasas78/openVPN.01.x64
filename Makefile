@@ -94,6 +94,11 @@ run_make_install:
 # ./configure
 # ./make
 # ./make install
+# config --->>> scramble obfuscate xxxyyyzzz
+#
+# another patch :
+# https://github.com/qzs21/Tunnelblick/blob/master/third_party/sources/openvpn/openvpn-2.3.7txp/patches/02-tunnelblick-openvpn_xorpatch.diff
+# https://github.com/qzs21/Tunnelblick/raw/master/third_party/sources/openvpn/openvpn-2.3.7txp/patches/02-tunnelblick-openvpn_xorpatch.diff
 
 xd xor_diff  :
 	@echo 
