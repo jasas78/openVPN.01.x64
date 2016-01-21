@@ -15,7 +15,8 @@ dir_called_full=$(shell pwd)
 
 name:=openvpn
 #ver:=2.3.8
-ver:=2.3.9
+#ver:=2.3.9
+ver:=2.3.10
 ext:=tar.xz
 
 build_dir:=1
@@ -126,7 +127,7 @@ xp xor_patch  :
 #	cd $(dir09)/ && patch < ../../openvpn_xor.patch
 #	cd $(dir09)/ && patch -p1 < ../../openvpn_xor.patch
 	cd $(dir09)/ && patch -p1 < ../../xor_patch.patch02
-	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN)/ $(srcN).bak01/  &> xor_patch.now ; echo )
+	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN)/ $(srcN).bak01/  &> xor_patch.now.$(ver) ; echo )
 	@echo 
 
 
