@@ -1,6 +1,6 @@
 diff -u -r openvpn-2.3.10.bak01/src/openvpn/forward.c openvpn-2.3.10/src/openvpn/forward.c
 --- openvpn-2.3.10.bak01/src/openvpn/forward.c	2015-12-21 20:57:26.000000000 +0800
-+++ openvpn-2.3.10/src/openvpn/forward.c	2016-01-22 08:29:21.291194264 +0800
++++ openvpn-2.3.10/src/openvpn/forward.c	2016-01-22 12:02:49.147894171 +0800
 @@ -675,7 +675,10 @@
    status = link_socket_read (c->c2.link_socket,
  			     &c->c2.buf,
@@ -27,7 +27,7 @@ diff -u -r openvpn-2.3.10.bak01/src/openvpn/forward.c openvpn-2.3.10/src/openvpn
  	    /* Undo effect of prepend */
 diff -u -r openvpn-2.3.10.bak01/src/openvpn/options.c openvpn-2.3.10/src/openvpn/options.c
 --- openvpn-2.3.10.bak01/src/openvpn/options.c	2016-01-04 20:17:32.000000000 +0800
-+++ openvpn-2.3.10/src/openvpn/options.c	2016-01-22 08:43:49.154261007 +0800
++++ openvpn-2.3.10/src/openvpn/options.c	2016-01-22 12:05:26.956906307 +0800
 @@ -792,6 +792,9 @@
    o->max_routes = MAX_ROUTES_DEFAULT;
    o->resolve_retry_seconds = RESOLV_RETRY_INFINITE;
@@ -58,41 +58,41 @@ diff -u -r openvpn-2.3.10.bak01/src/openvpn/options.c openvpn-2.3.10/src/openvpn
  
  #ifdef ENABLE_HTTP_PROXY
    if (o->http_proxy_options)
-@@ -5131,6 +5140,51 @@
+@@ -5131,6 +5140,52 @@
        options->proto_force = proto_force;
        options->force_connection_list = true;
      }
 +  else if (streq (p[0], "scramble") && p[1])
 +    {
 +      VERIFY_PERMISSION (OPT_P_GENERAL|OPT_P_CONNECTION);
-+	  msg (M_WARN, "info: scramble " );
++	  msg (M_WARN, "info: scramble begin " );
 +      if (streq (p[1], "xormask") && p[2] && (!p[3]))
 +	{
-+	  msg (M_WARN, "info: xormask " );
 +	  options->ce.xormethod = 1;
 +	  options->ce.xormask = p[2];
 +	  options->ce.xormasklen = strlen(options->ce.xormask);
++	  msg (M_WARN, "info: xormask %d" , options->ce.xormasklen  );
 +	}
 +      else if (streq (p[1], "xorptrpos") && (!p[2]))
 +	{
-+	  msg (M_WARN, "info: xorptrpos " );
 +	  options->ce.xormethod = 2;
 +	  options->ce.xormask = NULL;
 +	  options->ce.xormasklen = 0;
++	  msg (M_WARN, "info: xorptrpos %d" , options->ce.xormasklen  );
 +	}
 +      else if (streq (p[1], "reverse") && (!p[2]))
 +	{
-+	  msg (M_WARN, "info: reverse " );
 +	  options->ce.xormethod = 3;
 +	  options->ce.xormask = NULL;
 +	  options->ce.xormasklen = 0;
++	  msg (M_WARN, "info: reverse %d" , options->ce.xormasklen  );
 +	}
 +      else if (streq (p[1], "obfuscate") && p[2] && (!p[3]))
 +	{
-+	  msg (M_WARN, "info: obfuscate " );
 +	  options->ce.xormethod = 4;
 +	  options->ce.xormask = p[2];
 +	  options->ce.xormasklen = strlen(options->ce.xormask);
++	  msg (M_WARN, "info: obfuscate %d" , options->ce.xormasklen  );
 +	}
 +      else if (!p[2])
 +	{
@@ -106,13 +106,14 @@ diff -u -r openvpn-2.3.10.bak01/src/openvpn/options.c openvpn-2.3.10/src/openvpn
 +	  msg (msglevel, "No recognized 'scramble' method specified or extra parameters for 'scramble'");
 +	  goto err;
 +	}
++	  msg (M_WARN, "info: scramble end " );
 +    }
  #ifdef ENABLE_HTTP_PROXY
    else if (streq (p[0], "http-proxy") && p[1])
      {
 diff -u -r openvpn-2.3.10.bak01/src/openvpn/options.h openvpn-2.3.10/src/openvpn/options.h
 --- openvpn-2.3.10.bak01/src/openvpn/options.h	2016-01-04 20:17:32.000000000 +0800
-+++ openvpn-2.3.10/src/openvpn/options.h	2016-01-22 08:29:21.293194265 +0800
++++ openvpn-2.3.10/src/openvpn/options.h	2016-01-22 12:02:49.174894173 +0800
 @@ -100,6 +100,9 @@
    int connect_retry_max;
    int connect_timeout;
@@ -125,7 +126,7 @@ diff -u -r openvpn-2.3.10.bak01/src/openvpn/options.h openvpn-2.3.10/src/openvpn
  #endif  
 diff -u -r openvpn-2.3.10.bak01/src/openvpn/socket.c openvpn-2.3.10/src/openvpn/socket.c
 --- openvpn-2.3.10.bak01/src/openvpn/socket.c	2015-12-21 20:57:26.000000000 +0800
-+++ openvpn-2.3.10/src/openvpn/socket.c	2016-01-22 08:29:21.294194265 +0800
++++ openvpn-2.3.10/src/openvpn/socket.c	2016-01-22 12:02:49.175894173 +0800
 @@ -52,6 +52,53 @@
    IPv6_TCP_HEADER_SIZE,
  };
@@ -182,7 +183,7 @@ diff -u -r openvpn-2.3.10.bak01/src/openvpn/socket.c openvpn-2.3.10/src/openvpn/
   */
 diff -u -r openvpn-2.3.10.bak01/src/openvpn/socket.h openvpn-2.3.10/src/openvpn/socket.h
 --- openvpn-2.3.10.bak01/src/openvpn/socket.h	2015-12-21 20:57:26.000000000 +0800
-+++ openvpn-2.3.10/src/openvpn/socket.h	2016-01-22 08:29:21.295194265 +0800
++++ openvpn-2.3.10/src/openvpn/socket.h	2016-01-22 12:02:49.176894173 +0800
 @@ -245,6 +245,10 @@
  #endif
  };
