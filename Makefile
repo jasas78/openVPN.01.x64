@@ -1,10 +1,10 @@
 
 
 ifneq ($(USER),dyn)
-	$(info   )
+$(info   )
 $(info "the user must be 'dyn' , now : $(USER)" )
-	$(info   )
-	$(error exit)
+$(info   )
+$(error exit)
 endif
 
 time_called:=$(shell date +"%Y_%m%d__%H%M%P")
@@ -41,8 +41,9 @@ all :
 	@echo ' c    : clean '
 	@echo ' e    : extract '
 	@echo ' xp   : xor_patch  '
+	@echo ' xd   : xor_diff  '
 	@echo ' rlib : regen_lib'
-	@echo ' ceb  : clean extract xor_patch build regen_lib '
+	@echo ' aaa  : clean extract xor_patch xor_diff build regen_lib '
 	@echo 
 #	@echo ' if need gen ld_libs , use : '
 #	@echo '        sh ./test_lib.sh2 > 1.txt '
@@ -66,7 +67,7 @@ $(src_Makefile): $(srcA)
 
 e extract : $(src_Makefile)
 
-ceb : clean extract xor_patch build regen_lib 
+aaa : clean extract xor_patch xor_diff build regen_lib 
 
 b build : force_i386 bbb2  
 bbb2 : rm_ld_libs  run_config run_make run_rm_old_install_bin run_make_install
@@ -126,8 +127,15 @@ xp xor_patch  :
 #	cd $(dir09)/ && ( [ -L openvpn-2.3.6_ ] || ln -s . openvpn-2.3.6_ )
 #	cd $(dir09)/ && patch < ../../openvpn_xor.patch
 #	cd $(dir09)/ && patch -p1 < ../../openvpn_xor.patch
-	cd $(dir09)/ && patch -p1 < ../../xor_patch.patch02
-	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN)/ $(srcN).bak01/  &> xor_patch.now.$(ver) ; echo )
+	cd $(dir09)/ && patch -p1 < ../../xor_patch.patch99
+	@echo 
+xd xor_diff  :
+	@echo 
+	cd $(dir09)/ && rm -f \
+		src/openvpn/forward.c.orig  \
+		src/openvpn/options.c.orig  \
+		src/openvpn/socket.h.orig
+	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN).bak01/ $(srcN)/  &> xor_patch.now.$(ver) ; echo )
 	@echo 
 
 
