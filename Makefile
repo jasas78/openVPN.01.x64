@@ -134,7 +134,7 @@ xp xor_patch  :
 #	cd $(dir09)/ && ( [ -L openvpn-2.3.6_ ] || ln -s . openvpn-2.3.6_ )
 #	cd $(dir09)/ && patch < ../../openvpn_xor.patch
 #	cd $(dir09)/ && patch -p1 < ../../openvpn_xor.patch
-	cd $(dir09)/ && patch -p1 < ../../xor_patch.patch99
+	cd $(dir09)/ && patch -p1 < ../../xor_patch.patch99.$(ver)
 	@echo 
 xd xor_diff  :
 	@echo 
