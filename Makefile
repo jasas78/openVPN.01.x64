@@ -1,4 +1,6 @@
 
+# https://swupdate.openvpn.org/community/releases/openvpn-2.4.1.tar.xz
+# https://openvpn.net/index.php/open-source/downloads.html
 
 ifneq ($(USER),dyn)
 $(info   )
@@ -16,7 +18,9 @@ dir_called_full=$(shell pwd)
 name:=openvpn
 #ver:=2.3.8
 #ver:=2.3.9
-ver:=2.3.10
+#ver:=2.3.10
+ver:=2.3.11
+ver:=2.4.1
 ext:=tar.xz
 
 build_dir:=1
@@ -64,6 +68,9 @@ c clean:
 $(src_Makefile): $(srcA)
 	@mkdir -p $(build_dir)/
 	cd $(build_dir) && tar xJf ../$^
+	rm -f dst_dir
+	#ln -s $(build_dir)/  dst_dir
+	ln -s $(dir09)/ dst_dir
 
 e extract : $(src_Makefile)
 
@@ -131,11 +138,16 @@ xp xor_patch  :
 	@echo 
 xd xor_diff  :
 	@echo 
+	@echo  ' Usage : extract src dir to xxx.bak01 , then , modified them manually. '
+	@echo  ' then , re-extract to xxx/ , and run this to gen the diff file '
+	@echo
+	@echo 
 	cd $(dir09)/ && rm -f \
 		src/openvpn/forward.c.orig  \
 		src/openvpn/options.c.orig  \
 		src/openvpn/socket.h.orig
-	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN).bak01/ $(srcN)/  &> xor_patch.now.$(ver) ; echo )
+	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN).bak01/ $(srcN)/  &> xor_patch.now.$(ver) ; \
+		echo ; echo 'xor_patch.now.$(ver) ... is generated . ' ; pwd ; echo )
 	@echo 
 
 
