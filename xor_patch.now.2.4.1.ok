@@ -1,6 +1,6 @@
 diff -u -r openvpn-2.4.1.bak01/src/openvpn/forward.c openvpn-2.4.1/src/openvpn/forward.c
 --- openvpn-2.4.1.bak01/src/openvpn/forward.c	2017-03-22 23:34:21.000000000 +0800
-+++ openvpn-2.4.1/src/openvpn/forward.c	2017-03-27 10:45:01.016652676 +0800
++++ openvpn-2.4.1/src/openvpn/forward.c	2017-03-27 21:55:24.616243329 +0800
 @@ -730,7 +730,11 @@
  
      status = link_socket_read(c->c2.link_socket,
@@ -29,7 +29,7 @@ diff -u -r openvpn-2.4.1.bak01/src/openvpn/forward.c openvpn-2.4.1/src/openvpn/f
                  link_socket_write_post_size_adjust(&size, size_delta, &c->c2.to_link);
 diff -u -r openvpn-2.4.1.bak01/src/openvpn/options.c openvpn-2.4.1/src/openvpn/options.c
 --- openvpn-2.4.1.bak01/src/openvpn/options.c	2017-03-22 23:34:24.000000000 +0800
-+++ openvpn-2.4.1/src/openvpn/options.c	2017-03-27 10:45:01.019652677 +0800
++++ openvpn-2.4.1/src/openvpn/options.c	2017-03-27 21:55:24.619243329 +0800
 @@ -810,6 +810,11 @@
      o->resolve_retry_seconds = RESOLV_RETRY_INFINITE;
      o->resolve_in_advance = false;
@@ -121,7 +121,7 @@ diff -u -r openvpn-2.4.1.bak01/src/openvpn/options.c openvpn-2.4.1/src/openvpn/o
          struct http_proxy_options *ho;
 diff -u -r openvpn-2.4.1.bak01/src/openvpn/options.h openvpn-2.4.1/src/openvpn/options.h
 --- openvpn-2.4.1.bak01/src/openvpn/options.h	2017-03-22 23:34:24.000000000 +0800
-+++ openvpn-2.4.1/src/openvpn/options.h	2017-03-27 10:45:01.020652677 +0800
++++ openvpn-2.4.1/src/openvpn/options.h	2017-03-27 21:55:24.619243329 +0800
 @@ -98,6 +98,11 @@
      int connect_retry_seconds;
      int connect_retry_seconds_max;
@@ -136,7 +136,7 @@ diff -u -r openvpn-2.4.1.bak01/src/openvpn/options.h openvpn-2.4.1/src/openvpn/o
      const char *socks_proxy_port;
 diff -u -r openvpn-2.4.1.bak01/src/openvpn/socket.c openvpn-2.4.1/src/openvpn/socket.c
 --- openvpn-2.4.1.bak01/src/openvpn/socket.c	2017-03-22 23:34:21.000000000 +0800
-+++ openvpn-2.4.1/src/openvpn/socket.c	2017-03-27 10:45:01.021652677 +0800
++++ openvpn-2.4.1/src/openvpn/socket.c	2017-03-27 21:55:24.620243329 +0800
 @@ -55,6 +55,56 @@
      IPv6_TCP_HEADER_SIZE,
  };
@@ -196,7 +196,7 @@ diff -u -r openvpn-2.4.1.bak01/src/openvpn/socket.c openvpn-2.4.1/src/openvpn/so
   */
 diff -u -r openvpn-2.4.1.bak01/src/openvpn/socket.h openvpn-2.4.1/src/openvpn/socket.h
 --- openvpn-2.4.1.bak01/src/openvpn/socket.h	2017-03-22 23:34:21.000000000 +0800
-+++ openvpn-2.4.1/src/openvpn/socket.h	2017-03-27 10:45:01.022652677 +0800
++++ openvpn-2.4.1/src/openvpn/socket.h	2017-03-27 21:56:50.336249921 +0800
 @@ -249,6 +249,10 @@
  #endif
  };
@@ -208,7 +208,7 @@ diff -u -r openvpn-2.4.1.bak01/src/openvpn/socket.h openvpn-2.4.1/src/openvpn/so
  /*
   * Some Posix/Win32 differences.
   */
-@@ -1054,18 +1058,21 @@
+@@ -1054,30 +1058,58 @@
  static inline int
  link_socket_read(struct link_socket *sock,
                   struct buffer *buf,
@@ -233,7 +233,13 @@ diff -u -r openvpn-2.4.1.bak01/src/openvpn/socket.h openvpn-2.4.1/src/openvpn/so
      }
      else if (proto_is_tcp(sock->info.proto)) /* unified TCPv4 and TCPv6 */
      {
-@@ -1078,6 +1085,31 @@
+         /* from address was returned by accept */
+         addr_copy_sa(&from->dest, &sock->info.lsa->actual.dest);
+-        return link_socket_read_tcp(sock, buf);
++        res = link_socket_read_tcp(sock, buf);
+     }
+     else
+     {
          ASSERT(0);
          return -1; /* NOTREACHED */
      }
