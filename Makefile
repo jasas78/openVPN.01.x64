@@ -20,7 +20,7 @@ name:=openvpn
 #ver:=2.3.9
 #ver:=2.3.10
 ver:=2.3.11
-ver:=2.4.1
+#ver:=2.4.1
 ext:=tar.xz
 
 build_dir:=1
