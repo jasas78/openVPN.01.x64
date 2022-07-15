@@ -21,6 +21,7 @@ name:=openvpn
 #ver:=2.3.10
 ver:=2.3.11
 ver:=2.4.1
+ver:=2.5.7
 ext:=tar.xz
 
 build_dir:=1
@@ -29,7 +30,7 @@ dir01:=$(shell realpath `pwd`)
 dir02:=$(dir01)/$(ver)
 
 srcN:=$(name)-$(ver)
-srcA:=src/$(srcN).$(ext)
+srcA:=srcOPENVPN/$(srcN).$(ext)
 
 dir09:=$(build_dir)/$(name)-$(ver)
 dir08:=$(dir09).bak01
@@ -80,7 +81,7 @@ b build : force_i386 bbb2
 bbb2 : rm_ld_libs  run_config run_make run_rm_old_install_bin run_make_install
 
 force_i386 :
-	[ "$(x86sign)" = '2' ] || ( echo ; echo ; echo "error met , no allow in a x86_64" ; echo ; echo ; exit 34 ) 
+#	[ "$(x86sign)" = '2' ] || ( echo ; echo ; echo "error met , no allow in a x86_64" ; echo ; echo ; exit 34 ) 
 
 cb clean_bin run_rm_old_install_bin : 
 	@echo
@@ -96,8 +97,9 @@ rm_ld_libs:
 	rm -f $(wildcard /home/bootH/OpenVZ/i386/lib/ld-linux.so.2 /home/bootH/OpenVZ/i386/lib/lib*.so.*)
 run_config:
 	cd $(dir09)/ && \
-		LDFLAGS=" -Wl,-rpath=/system/ext41/lib -Wl,-rpath=/system/ext41/usr/lib -Wl,-rpath=/home/bootH/OpenVZ/i386/lib " \
 		./configure --prefix=$(dir02)        > ../log.$(srcN).configure.txt
+#		LDFLAGS=" -Wl,-rpath=/system/ext41/lib -Wl,-rpath=/system/ext41/usr/lib -Wl,-rpath=/home/bootH/OpenVZ/i386/lib " \
+
 run_make:
 	cd $(dir09)/ && make                     > ../log.$(srcN).make.txt
 run_make_install:
@@ -143,9 +145,9 @@ xd xor_diff  :
 	@echo
 	@echo 
 	cd $(dir09)/ && rm -f \
-		src/openvpn/forward.c.orig  \
-		src/openvpn/options.c.orig  \
-		src/openvpn/socket.h.orig
+		srcOPENVPN/openvpn/forward.c.orig  \
+		srcOPENVPN/openvpn/options.c.orig  \
+		srcOPENVPN/openvpn/socket.h.orig
 	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN).bak01/ $(srcN)/  &> xor_patch.now.$(ver) ; \
 		echo ; echo 'xor_patch.now.$(ver) ... is generated . ' ; pwd ; echo )
 	@echo 

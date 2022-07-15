@@ -16,6 +16,8 @@
 /src/openvpn-2.3.1?.tar.xz
 /src/openvpn-2.4.?.tar.xz
 /src/openvpn-2.4.1?.tar.xz
+/srcOPENVPN/openvpn*.tar.xz
+/srcOPENVPN/openvpn*.tar.gz
 
 /2.3.?.tar.xz
 
@@ -23,3 +25,4 @@
 /2.3.10/
 /2.3.11/
 /2.4.1/
+/2.5.7/
