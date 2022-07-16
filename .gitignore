@@ -19,6 +19,9 @@
 /srcOPENVPN/openvpn*.tar.xz
 /srcOPENVPN/openvpn*.tar.gz
 
+/lib/
+/sq.openvpn.*.mksquashfs
+
 /2.3.?.tar.xz
 
 /2.3.9/

@@ -55,9 +55,28 @@ all :
 #	@echo '        cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ '
 	@echo ; echo ; echo
 
+ldlib:=/lib64/ld-linux-x86-64.so.2
+lib : rlib 
 rlib regen_lib:
-	sh ./test_lib.sh2 > 1.txt 
-	cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ 
+	test ! -d lib/ || chmod -R u+w lib/
+	rm -fr lib/
+	test ! -d lib/ 
+	mkdir lib/ lib/lib/
+	cp $(ldlib) lib/lib/
+	$(ldlib)     --list     $(ver)/sbin/openvpn > lib/1.txt
+	cat lib/1.txt |awk '{print $$3}' |grep -v ^$$ > lib/2.txt
+	cat lib/2.txt |awk '{print "cp " $$1 " lib/lib/"}' > lib/3.txt
+	bash lib/3.txt
+	ls lib/lib/l* |xargs -n 1 strip --strip-unneeded
+	( cd $(ver) && tar cf - .) | ( cd lib/ && tar xf - ) 
+	cd lib/ && chmod u+w . && ln -s lib/ lib64
+	chmod -R a-w lib/
+	rm -f                            sq.openvpn.$(ver).mksquashfs
+	nice -n 19 mksquashfs    lib/    sq.openvpn.$(ver).mksquashfs                   -comp xz -b 1M -force-uid nobody -force-gid nogroup
+
+
+#	sh ./test_lib.sh2 > 1.txt 
+#	cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ 
 
 m:
 	vim Makefile
@@ -104,6 +123,7 @@ run_make:
 	cd $(dir09)/ && make                     > ../log.$(srcN).make.txt
 run_make_install:
 	cd $(dir09)/ && make install             > ../log.$(srcN).install.txt
+	(find $(ver)/ -type f |xargs -n 1 strip --strip-unneeded ) 2>/dev/null ; echo
 	chmod -R a-w $(ver)/
 
 
@@ -127,6 +147,7 @@ run_make_install:
 
 xd2 xor_diff2  :
 	@echo 
+	@echo 'diff -r <$(dir09)> <$(dir08)>'
 	diff -r $(dir09) $(dir08) 
 	@echo 
 
@@ -148,8 +169,8 @@ xd xor_diff  :
 		srcOPENVPN/openvpn/forward.c.orig  \
 		srcOPENVPN/openvpn/options.c.orig  \
 		srcOPENVPN/openvpn/socket.h.orig
-	cd $(dir09)/ && cd .. && ( diff -u -r $(srcN).bak01/ $(srcN)/  &> xor_patch.now.$(ver) ; \
-		echo ; echo 'xor_patch.now.$(ver) ... is generated . ' ; pwd ; echo )
+	cd $(dir09)/ && cd .. && (test ! -d $(srcN).bak01/ || ( diff -u -r $(srcN).bak01/ $(srcN)/  &> xor_patch.now.$(ver) ; \
+		echo ; echo 'xor_patch.now.$(ver) ... is generated . ' ; pwd ; echo ))
 	@echo 
 
 
