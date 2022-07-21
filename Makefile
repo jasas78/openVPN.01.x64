@@ -58,21 +58,34 @@ all :
 ldlib:=/lib64/ld-linux-x86-64.so.2
 lib : rlib 
 rlib regen_lib:
-	test ! -d lib/ || chmod -R u+w lib/
-	rm -fr lib/
-	test ! -d lib/ 
-	mkdir lib/ lib/lib/
-	cp $(ldlib) lib/lib/
-	$(ldlib)     --list     $(ver)/sbin/openvpn > lib/1.txt
-	cat lib/1.txt |awk '{print $$3}' |grep -v ^$$ > lib/2.txt
-	cat lib/2.txt |awk '{print "cp " $$1 " lib/lib/"}' > lib/3.txt
-	bash lib/3.txt
-	ls lib/lib/l* |xargs -n 1 strip --strip-unneeded
-	( cd $(ver) && tar cf - .) | ( cd lib/ && tar xf - ) 
-	cd lib/ && chmod u+w . && ln -s lib/ lib64
-	chmod -R a-w lib/
-	rm -f                            sq.openvpn.$(ver).mksquashfs
-	nice -n 19 mksquashfs    lib/    sq.openvpn.$(ver).mksquashfs                   -comp xz -b 1M -force-uid nobody -force-gid nogroup
+	test ! -d sq_server/ || chmod -R u+w sq_server/
+	rm -fr sq_server/
+	test ! -d sq_server/ 
+	mkdir sq_server/ sq_server/lib/
+	cp $(ldlib) sq_server/lib/
+	$(ldlib)     --list     $(ver)/sbin/openvpn	> sq_server/1.txt
+	$(ldlib)     --list     /bin/bash          >> sq_server/1.txt
+	$(ldlib)     --list     /bin/ls	           >> sq_server/1.txt
+	cat sq_server/1.txt |awk '{print $$3}' |sort -u |grep -v ^$$ > sq_server/2.txt
+	cat sq_server/2.txt |awk '{print "cp " $$1 " sq_server/lib/"}' > sq_server/3.txt
+	mkdir -p 			sq_server/bin/ 
+	cp /bin/bash 		sq_server/bin/ 
+	cp /bin/ls 			sq_server/bin/ 
+	bash sq_server/3.txt
+	ls sq_server/lib/l* |xargs -n 1 strip --strip-unneeded
+	( cd $(ver) && tar cf - .)                      | ( cd sq_server/ && tar xf - ) 
+#	( cd `realpath conf_server`  && tar cf - .)     | ( cd sq_server/ && tar xf - ) 
+	chmod 755 	sq_server/
+	mkdir -p 	sq_server/tmp sq_server/dev sq_server/proc
+	echo  		sq_server/tmp/_
+	echo  		sq_server/dev/_
+	echo  		sq_server/proc/_
+	( cd /home/bootH/OpenVZ/openVPN.02.key/conf_server/  && tar cf - .)     | ( cd sq_server/ && tar xf - ) 
+	echo "/sbin/openvpn --config /etc/openvpn/server.conf" > sq_server/sss
+	cd sq_server/ && chmod u+w . && ln -s lib/ lib64
+	chmod -R a-w sq_server/
+	rm -f                            		sq.openvpn.$(ver).mksquashfs
+	nice -n 19 mksquashfs	sq_server/    	sq.openvpn.$(ver).mksquashfs                   -comp xz -b 1M -force-uid nobody -force-gid nogroup
 
 
 #	sh ./test_lib.sh2 > 1.txt 
@@ -185,6 +198,9 @@ gc:
 	echo "$(dir_called_full)_ _$(time_called)" > date.now.txt
 	git commit -a --template=date.now.txt
 	sync
+
+ga:
+	git add .
 
 gd:
 	git diff
