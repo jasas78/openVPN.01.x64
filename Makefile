@@ -84,8 +84,9 @@ rlib regen_lib:
 	echo "/sbin/openvpn --config /etc/openvpn/server.conf" > sq_server/sss
 	cd sq_server/ && chmod u+w . && ln -s lib/ lib64
 	chmod -R a-w sq_server/
-	rm -f                            		sq.openvpn.$(ver).mksquashfs
+	rm -f                            		sq.openvpn.$(ver).mksquashfs                   sq.openvpn.mksquashfs
 	nice -n 19 mksquashfs	sq_server/    	sq.openvpn.$(ver).mksquashfs                   -comp xz -b 1M -force-uid nobody -force-gid nogroup
+	ln -s                                   sq.openvpn.$(ver).mksquashfs                   sq.openvpn.mksquashfs
 
 
 #	sh ./test_lib.sh2 > 1.txt 

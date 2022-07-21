@@ -15,4 +15,19 @@ then
     echo 
     echo " umount failed !!! "
     echo 
+    exit
+else
+    echo
+    echo " umount all succeed."
+fi
+
+if [ "${1}" = 'm' ]
+then
+    echo
+    mount /ov          
+    mount /ov/tmp      
+    mount /ov/dev      
+    mount /ov/proc     
+    echo
+    mount |grep \ /ov 
 fi
