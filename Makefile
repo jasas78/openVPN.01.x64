@@ -205,6 +205,13 @@ ga:
 
 gd:
 	git diff
+#gc:
+#	git commit -a
+gcX:
+	git commit -a -m '$(time_called)'
+
+up:
+	git push
 
 vim_prepare_clean :
 	@mkdir -p _vim/
