@@ -60,8 +60,10 @@ all :
 #	@echo '        cat 1.txt |xargs -n 1 -I '{}' cp '{}' lib/ '
 	@echo ; echo ; echo
 
-export nobody:=nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin$(EOL)dyn:x:500:500:dyn,,,:/home/dyn:/bin/bash
+export nobody:=nobody:x:65534:65534:nogroup:/nonexistent:/usr/sbin/nologin$(EOL)dyn:x:500:500:dyn,,,:/home/dyn:/bin/bash
 export nogroup:=nogroup:x:65534:dyn
+export nobody:=nobody:x:65534:65533::/home/nobody:/bin/sh
+export nogroup:=nobody:x:65533:
 ldlib:=/lib64/ld-linux-x86-64.so.2
 rlib regen_lib:
 	test ! -d sq_common/ || chmod -R u+w sq_common/
@@ -74,16 +76,18 @@ rlib regen_lib:
 	$(ldlib)     --list     /bin/ls	           >> sq_common/1.txt
 	cat sq_common/1.txt |awk '{print $$3}' |sort -u |grep -v ^$$ > sq_common/2.txt
 	cat sq_common/2.txt |awk '{print "cp " $$1 " sq_common/lib/"}' > sq_common/3.txt
-	mkdir -p 			sq_common/bin/ 
-	cp /bin/bash 		sq_common/bin/ 
-	cp /bin/ls 			sq_common/bin/ 
-	mkdir -p            sq_common/ch2/tmp    # for the openvpn Chroot
-	echo                sq_common/ch2/tmp/_
-	mkdir -p            sq_common/etc
-	echo "$${nobody}" >  sq_common/etc/passwd
-	chmod 644           sq_common/etc/passwd
+	mkdir -p 			 sq_common/bin/ 
+	cp /bin/bash 		 sq_common/bin/ 
+	cp /bin/ls 			 sq_common/bin/ 
+	mkdir -p             sq_common/ch2/tmp    # for the openvpn Chroot
+	echo                 sq_common/ch2/tmp/_
+	mkdir -p             sq_common/etc
+	echo "$${nobody}"  > sq_common/etc/passwd
+	chmod 644            sq_common/etc/passwd
 	echo "$${nogroup}" > sq_common/etc/group
-	chmod 644           sq_common/etc/group
+	chmod 644            sq_common/etc/group
+	#cat /etc/passwd    > sq_common/etc/passwd
+	#cat /etc/group     > sq_common/etc/group
 	bash sq_common/3.txt
 	ls sq_common/lib/l* |xargs -n 1 strip --strip-unneeded
 	@echo
@@ -95,8 +99,10 @@ sqs : rlib
 	test ! -d $($@) || rm -fr $($@)
 	test ! -d $($@) 
 	mkdir $($@)
-	( cd $(ver) && tar cf - .)                      | ( cd $($@) && tar xf - ) 
-	chmod 755 	$($@)/
+	( cd $(ver)     && tar cf - .)                      | ( cd $($@) && tar xf - ) 
+	chmod -R u+w 	$($@)/
+	( cd sq_common/ && tar cf - .)                      | ( cd $($@) && tar xf - ) 
+	chmod -R u+w 	$($@)/
 	for aa1 in $($@)/tmp $($@)/dev $($@)/proc $($@)/ch2 ; do \
 		mkdir   -p	$${aa1} 	; \
 		echo  	>	$${aa1}/_ 	; \
