@@ -86,21 +86,28 @@ rlib regen_lib:
 	chmod 644           sq_common/etc/group
 	bash sq_common/3.txt
 	ls sq_common/lib/l* |xargs -n 1 strip --strip-unneeded
+	@echo
+
+sqs:=sq_server
+export sqs
 sqs : rlib 
-	( cd $(ver) && tar cf - .)                      | ( cd sq_server/ && tar xf - ) 
-#	( cd `realpath conf_server`  && tar cf - .)     | ( cd sq_server/ && tar xf - ) 
-	chmod 755 	sq_server/
-	mkdir -p 	sq_server/tmp sq_server/dev sq_server/proc
-	echo  		sq_server/tmp/_
-	echo  		sq_server/dev/_
-	echo  		sq_server/proc/_
-	( cd /home/bootH/OpenVZ/openVPN.02.key/conf_server/  && tar cf - .)     | ( cd sq_server/ && tar xf - ) 
-	echo "/sbin/openvpn --config /etc/openvpn/server.conf" > sq_server/sss
-	cd sq_server/ && chmod u+w . && ln -s lib/ lib64
-	chmod -R a-w sq_server/
-	rm -f                            		sq.openvpn.$(ver).mksquashfs                   sq.openvpn.mksquashfs
-	nice -n 19 mksquashfs	sq_server/    	sq.openvpn.$(ver).mksquashfs                   -comp xz -b 1M -force-uid nobody -force-gid nogroup
-	ln -s                                   sq.openvpn.$(ver).mksquashfs                   sq.openvpn.mksquashfs
+	test ! -d $($@) || chmod -R u+w $($@)
+	test ! -d $($@) || rm -fr $($@)
+	test ! -d $($@) 
+	mkdir $($@)
+	( cd $(ver) && tar cf - .)                      | ( cd $($@) && tar xf - ) 
+	chmod 755 	$($@)/
+	for aa1 in $($@)/tmp $($@)/dev $($@)/proc $($@)/ch2 ; do \
+		mkdir   -p	$${aa1} 	; \
+		echo  	>	$${aa1}/_ 	; \
+		done
+	( cd /home/bootH/OpenVZ/openVPN.02.key/conf_`echo -n $($@)|cut -c 4-`/  && tar cf - .)     | ( cd $($@)/ && tar xf - ) 
+	echo "/sbin/openvpn --config   /etc/openvpn/`echo -n $($@)|cut -c 4-`.conf" > $($@)/sss
+	cd $($@)/ && chmod u+w . && ln -s lib/ lib64
+	chmod -R a-w $($@)/
+	rm -f                            		sq.openvpn.$@.$(ver).mksquashfs     sq.openvpn.mksquashfs
+	nice -n 19 mksquashfs	$($@)/	sq.openvpn.$@.$(ver).mksquashfs     -comp xz -b 1M -force-uid nobody -force-gid nogroup
+	ln -s                                   sq.openvpn.$@.$(ver).mksquashfs		sq.openvpn.$@.mksquashfs
 
 
 #	sh ./test_lib.sh2 > 1.txt 
