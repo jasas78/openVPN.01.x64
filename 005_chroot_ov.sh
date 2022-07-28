@@ -21,7 +21,7 @@ fi
 
 
 #if [ 'dyn' = "${USER}" ]
-if [ 1 = 1 ]
+if [ -z "$1" ]
 then
     # /etc/sudoers.d/for_dyn
     # dyn v1=        NOPASSWD:/bin/linux32  /sbin/chroot /a3/miniserve/miniserve-v0.20.0/ /bin/su - dyn
@@ -34,5 +34,14 @@ then
     echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/ /sbin/openvpn --config /etc/openvpn/server.conf "
           nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/ /sbin/openvpn --config /etc/openvpn/server.conf  
     echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/ /sbin/openvpn --config /etc/openvpn/server.conf "
+elif [ "$1" = 'r' ]
+then
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/ /sbin/openvpn --config /tmp/conf_server.conf "
+          nice -n 19 sudo /sbin/chroot                                    /ov/ /sbin/openvpn --config /tmp/conf_server.conf  
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/ /sbin/openvpn --config /tmp/conf_server.conf "
+else
+    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/ /sbin/openvpn --config /tmp/conf_server.conf "
+          nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/ /sbin/openvpn --config /tmp/conf_server.conf  
+    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/ /sbin/openvpn --config /tmp/conf_server.conf "
 fi
   
