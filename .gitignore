@@ -29,4 +29,6 @@
 /2.3.11/
 /2.4.1/
 /2.5.7/
-sq_server
+/sq_common/
+/sq_server/
+/sq_client/

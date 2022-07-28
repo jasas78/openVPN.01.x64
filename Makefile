@@ -51,7 +51,8 @@ all :
 	@echo ' e    : extract '
 	@echo ' xp   : xor_patch  '
 	@echo ' xd   : xor_diff  '
-	@echo ' rlib : regen_lib : include mksquashfs '
+	@echo ' sqs  : gen_mksquashfs_server '
+	@echo ' sqc  : gen_mksquashfs_client '
 	@echo ' aaa  : clean extract xor_patch xor_diff build regen_lib '
 	@echo 
 #	@echo ' if need gen ld_libs , use : '
@@ -62,30 +63,30 @@ all :
 export nobody:=nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin$(EOL)dyn:x:500:500:dyn,,,:/home/dyn:/bin/bash
 export nogroup:=nogroup:x:65534:dyn
 ldlib:=/lib64/ld-linux-x86-64.so.2
-sq lib : rlib 
 rlib regen_lib:
-	test ! -d sq_server/ || chmod -R u+w sq_server/
-	rm -fr sq_server/
-	test ! -d sq_server/ 
-	mkdir sq_server/ sq_server/lib/
-	cp $(ldlib) sq_server/lib/
-	$(ldlib)     --list     $(ver)/sbin/openvpn	> sq_server/1.txt
-	$(ldlib)     --list     /bin/bash          >> sq_server/1.txt
-	$(ldlib)     --list     /bin/ls	           >> sq_server/1.txt
-	cat sq_server/1.txt |awk '{print $$3}' |sort -u |grep -v ^$$ > sq_server/2.txt
-	cat sq_server/2.txt |awk '{print "cp " $$1 " sq_server/lib/"}' > sq_server/3.txt
-	mkdir -p 			sq_server/bin/ 
-	cp /bin/bash 		sq_server/bin/ 
-	cp /bin/ls 			sq_server/bin/ 
-	mkdir -p            sq_server/ch2/tmp    # for the openvpn Chroot
-	echo                sq_server/ch2/tmp/_
-	mkdir -p            sq_server/etc
-	echo "$${nobody}" >  sq_server/etc/passwd
-	chmod 644           sq_server/etc/passwd
-	echo "$${nogroup}" > sq_server/etc/group
-	chmod 644           sq_server/etc/group
-	bash sq_server/3.txt
-	ls sq_server/lib/l* |xargs -n 1 strip --strip-unneeded
+	test ! -d sq_common/ || chmod -R u+w sq_common/
+	rm -fr sq_common/
+	test ! -d sq_common/ 
+	mkdir sq_common/ sq_common/lib/
+	cp $(ldlib) sq_common/lib/
+	$(ldlib)     --list     $(ver)/sbin/openvpn	> sq_common/1.txt
+	$(ldlib)     --list     /bin/bash          >> sq_common/1.txt
+	$(ldlib)     --list     /bin/ls	           >> sq_common/1.txt
+	cat sq_common/1.txt |awk '{print $$3}' |sort -u |grep -v ^$$ > sq_common/2.txt
+	cat sq_common/2.txt |awk '{print "cp " $$1 " sq_common/lib/"}' > sq_common/3.txt
+	mkdir -p 			sq_common/bin/ 
+	cp /bin/bash 		sq_common/bin/ 
+	cp /bin/ls 			sq_common/bin/ 
+	mkdir -p            sq_common/ch2/tmp    # for the openvpn Chroot
+	echo                sq_common/ch2/tmp/_
+	mkdir -p            sq_common/etc
+	echo "$${nobody}" >  sq_common/etc/passwd
+	chmod 644           sq_common/etc/passwd
+	echo "$${nogroup}" > sq_common/etc/group
+	chmod 644           sq_common/etc/group
+	bash sq_common/3.txt
+	ls sq_common/lib/l* |xargs -n 1 strip --strip-unneeded
+sqs : rlib 
 	( cd $(ver) && tar cf - .)                      | ( cd sq_server/ && tar xf - ) 
 #	( cd `realpath conf_server`  && tar cf - .)     | ( cd sq_server/ && tar xf - ) 
 	chmod 755 	sq_server/
