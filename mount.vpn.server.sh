@@ -1,13 +1,13 @@
 #!/bin/bash
 
-umount /ov/tmp      &> /dev/null
-umount /ov/dev      &> /dev/null
-umount /ov/proc     &> /dev/null
-umount /ov          &> /dev/null
+umount /ov/s/tmp      &> /dev/null
+umount /ov/s/dev      &> /dev/null
+umount /ov/s/proc     &> /dev/null
+umount /ov/s          &> /dev/null
 
-mount |grep \ /ov
+mount |grep \ /ov/s
 
-aa1=`mount |grep \ /ov |wc -l`
+aa1=`mount |grep \ /ov/s |wc -l`
 
 #echo "aa1=<${aa1}>"
 if [ ${aa1} -ne 0 ]
@@ -24,10 +24,11 @@ fi
 if [ "${1}" = 'm' ]
 then
     echo
-    mount /ov          
-    mount /ov/tmp      
-    mount /ov/dev      
-    mount /ov/proc     
+    mount /ov/s          
+    mount /ov/s/tmp      
+    mount /ov/s/dev      
+    mount /ov/s/proc     
     echo
-    mount |grep \ /ov 
+    mount |grep \ /ov|sort
+    echo
 fi
