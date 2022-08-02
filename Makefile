@@ -107,13 +107,47 @@ sqs : rlib
 		mkdir   -p	$${aa1} 	; \
 		echo  	>	$${aa1}/_ 	; \
 		done
-	( cd /home/bootH/OpenVZ/openVPN.02.key/conf_`echo -n $($@)|cut -c 4-`/  && tar cf - .)     | ( cd $($@)/ && tar xf - ) 
+	( cd ../openVPN.02.key/conf_`echo -n $($@)|cut -c 4-`/  && tar cf - .)     | ( cd $($@)/ && tar xf - ) 
 	echo "/sbin/openvpn --config   /etc/openvpn/`echo -n $($@)|cut -c 4-`.conf" > $($@)/sss
 	cd $($@)/ && chmod u+w . && ln -s lib/ lib64
 	chmod -R a-w $($@)/
-	rm -f                            		sq.openvpn.$@.$(ver).mksquashfs     sq.openvpn.mksquashfs
-	nice -n 19 mksquashfs	$($@)/	sq.openvpn.$@.$(ver).mksquashfs     -comp xz -b 1M -force-uid nobody -force-gid nogroup
-	ln -s                                   sq.openvpn.$@.$(ver).mksquashfs		sq.openvpn.$@.mksquashfs
+	rm -f                        sq.openvpn.$@.$(ver).mksquashfs     sq.openvpn.mksquashfs
+	nice -n 19 mksquashfs $($@)/ sq.openvpn.$@.$(ver).mksquashfs     -comp xz -b 1M -force-uid nobody -force-gid nogroup
+	ln -s                        sq.openvpn.$@.$(ver).mksquashfs 	 sq.openvpn.$@.mksquashfs
+
+clientName:=Eaafb_mp4_client
+clientAmount:=3
+clientNameS:=$(foreach aa1,$(shell bb1=20;bb2=$$((20+$(clientAmount))); while [ $${bb1} -lt $${bb2} ] ; do \
+    echo $${bb1};bb1=$$(($${bb1}+1));done),$(aa1))
+
+
+sqc:=sq_client
+sqc : rlib 
+	test ! -d $($@) || chmod -R u+w $($@)
+	test ! -d $($@) || rm -fr       $($@)
+	test ! -d $($@) 
+	mkdir     $($@) 
+	$(foreach aa1,$(clientNameS), \
+        @make sqcX -e sqcX=$(sqc)/$(aa1) -e sqcY=client/$(clientName)_$(aa1) -e sqcZ=$(aa1) $(EOL))
+
+sqcX: 
+	test -d $(sqc)
+	mkdir $($@)
+	( cd $(ver)     && tar cf - .)                      | ( cd $($@) && tar xf - ) 
+	chmod -R u+w 	$($@)/
+	( cd sq_common/ && tar cf - .)                      | ( cd $($@) && tar xf - ) 
+	chmod -R u+w 	$($@)/
+	for aa1 in $($@)/tmp $($@)/dev $($@)/proc $($@)/ch2 ; do \
+		mkdir   -p	$${aa1} 	; \
+		echo  	>	$${aa1}/_ 	; \
+		done
+	( cd ../openVPN.02.key/conf_$(sqcY)   && tar cf - .)     | ( cd $($@)/ && tar xf - ) 
+	echo "/sbin/openvpn --config   /etc/openvpn/`echo -n $($@)|cut -c 4-`.conf" > $($@)/sss
+	cd $($@)/ && chmod u+w . && ln -s lib/ lib64
+	chmod -R a-w $($@)/
+	rm -f                           sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs     sq.openvpn.mksquashfs
+	nice -n 19 mksquashfs	$($@)/	sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs     -comp xz -b 1M -force-uid nobody -force-gid nogroup
+	ln -s                           sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs	 sq.openvpn.sqc_$(sqcZ).mksquashfs
 
 
 #	sh ./test_lib.sh2 > 1.txt 
