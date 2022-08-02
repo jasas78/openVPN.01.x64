@@ -34,11 +34,16 @@ then
     echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/s/ /sbin/openvpn --config /etc/openvpn/server.conf "
           nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/s/ /sbin/openvpn --config /etc/openvpn/server.conf  
     echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/s/ /sbin/openvpn --config /etc/openvpn/server.conf "
-elif [ "$1" = 'r' ]
+elif [ "$1" = 'r1' ]
 then
     echo "nice -n 19 sudo /sbin/chroot                                    /ov/s/ /sbin/openvpn --config /tmp/conf_server.conf "
           nice -n 19 sudo /sbin/chroot                                    /ov/s/ /sbin/openvpn --config /tmp/conf_server.conf  
     echo "nice -n 19 sudo /sbin/chroot                                    /ov/s/ /sbin/openvpn --config /tmp/conf_server.conf "
+elif [ "$1" = 'r2' ]
+then
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/s/ /sbin/openvpn --config /etc/openvpn/server.conf "
+          nice -n 19 sudo /sbin/chroot                                    /ov/s/ /sbin/openvpn --config /etc/openvpn/server.conf  
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/s/ /sbin/openvpn --config /etc/openvpn/server.conf "
 else
     echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/s/ /sbin/openvpn --config /tmp/conf_server.conf "
           nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/s/ /sbin/openvpn --config /tmp/conf_server.conf  
