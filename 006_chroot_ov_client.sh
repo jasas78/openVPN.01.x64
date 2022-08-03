@@ -31,17 +31,22 @@ then
     #echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /bin/bash"
     #      nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /bin/bash 
     #echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /bin/bash"
-    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /etc/openvpn/server.conf "
-          nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /etc/openvpn/server.conf  
-    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /etc/openvpn/server.conf "
-elif [ "$1" = 'r' ]
+    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /etc/openvpn/client.conf "
+          nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /etc/openvpn/client.conf  
+    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /etc/openvpn/client.conf "
+elif [ "$1" = 'r1' ]
 then
-    echo "nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /tmp/conf_server.conf "
-          nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /tmp/conf_server.conf  
-    echo "nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /tmp/conf_server.conf "
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /tmp/conf_client.conf "
+          nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /tmp/conf_client.conf  
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /tmp/conf_client.conf "
+elif [ "$1" = 'r2' ]
+then
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /etc/openvpn/client.conf "
+          nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /etc/openvpn/client.conf  
+    echo "nice -n 19 sudo /sbin/chroot                                    /ov/c/ /sbin/openvpn --config /etc/openvpn/client.conf "
 else
-    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /tmp/conf_server.conf "
-          nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /tmp/conf_server.conf  
-    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /tmp/conf_server.conf "
+    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /tmp/conf_client.conf "
+          nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /tmp/conf_client.conf  
+    echo "nice -n 19 sudo /sbin/chroot --userspec nobody --groups=nogroup /ov/c/ /sbin/openvpn --config /tmp/conf_client.conf "
 fi
   

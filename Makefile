@@ -145,7 +145,7 @@ sqcX:
 	echo "/sbin/openvpn --config   /etc/openvpn/`echo -n $($@)|cut -c 4-`.conf" > $($@)/sss
 	cd $($@)/ && chmod u+w . && ln -s lib/ lib64
 	chmod -R a-w $($@)/
-	rm -f                           sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs     sq.openvpn.mksquashfs
+	rm -f                           sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs     sq.openvpn.sqc_$(sqcZ).mksquashfs
 	nice -n 19 mksquashfs	$($@)/	sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs     -comp xz -b 1M -force-uid nobody -force-gid nogroup
 	ln -s                           sq.openvpn.sqc_$(sqcZ).$(ver).mksquashfs	 sq.openvpn.sqc_$(sqcZ).mksquashfs
 
