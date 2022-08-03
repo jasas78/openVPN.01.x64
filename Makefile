@@ -299,3 +299,7 @@ vp vim_prepare1 : vim_prepare_clean
 	sync
 
 
+X:
+	git add .
+	git commit -a
+	git push
